@@ -1,0 +1,41 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon --inspect -r dotenv/config ./services/server.js",
+    "dev": "nodemon ./services/server.js",
+    "start": "node ./services/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nathaliemekahal/LinkedIn_BE.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nathaliemekahal/LinkedIn_BE/issues"
+  },
+  "homepage": "https://github.com/nathaliemekahal/LinkedIn_BE#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-list-endpoints": "^5.0.0",
+    "fs": "0.0.1-security",
+    "fs-extra": "^9.0.1",
+    "json2csv": "^5.0.1",
+    "mongoose": "^5.9.25",
+    "multer": "^1.4.2",
+    "path": "^0.12.7",
+    "pump": "^3.0.0",
+    "pdfkit": "^0.11.0",
+    "query-to-mongo": "^0.10.1",
+    "validator": "^13.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
