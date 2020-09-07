@@ -5,23 +5,56 @@ const dotenv = require("dotenv");
 const postsRoutes = require("./posts");
 const experienceRoute = require("./experience");
 const commentRoutes = require("./comments");
-const userRouter = require("./auth/user")
+const userRouter = require("./auth/user");
 const cookieParser = require("cookie-parser");
+const socketio = require("socket.io");
 const server = express();
-const passport = require("passport")
-server.use(passport.initialize())
 
-const whitelist = ["http://localhost:3000"]
+const http = require("http");
+const app = http.createServer(server);
+const io = socketio(app);
+
+const passport = require("passport");
+server.use(passport.initialize());
+
+//sockets
+const users = [];
+io.on("connection", (socket) => {
+  let id = socket.id;
+  console.log("connected");
+  socket.on("info", ({ username }) => {
+    const userExists = users.find((user) => user.username === username);
+    if (!userExists) {
+      users.push({ username, id });
+    }
+    io.emit("updateUsers", users);
+    console.log(users);
+  });
+  socket.on("chatmessage", ({ from, text, to }) => {
+    let receiver = users.find((user) => user.username === to);
+    io.to(receiver.id).emit("message", { from, text, to });
+    console.log(text);
+    console.log(receiver);
+  });
+  //
+
+  //
+  socket.on("disconnect", () => {
+    console.log("disconnected");
+  });
+});
+
+const whitelist = ["http://localhost:3000"];
 const corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
-      callback(null, true)
+      callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"))
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
-}
+};
 server.use(cookieParser());
 
 const listEndpoints = require("express-list-endpoints");
@@ -42,7 +75,7 @@ server.use("/posts", postsRoutes);
 server.use("/profile", experienceRoute);
 server.use("/profile", profilesRouter);
 server.use("/comments", commentRoutes);
-server.use("/user",userRouter);
+server.use("/user", userRouter);
 
 server.use(badRequestHandler);
 server.use(notFoundHandler);
@@ -61,6 +94,10 @@ mongoose
       console.log(`working on port ${port}`);
     })
   );
+
+app.listen(3007, () => {
+  console.log("socket on 3007");
+});
 /* mongoose.connection.on("connected", () => {
   console.log("connected to atlas");
 });
