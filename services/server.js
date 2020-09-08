@@ -70,7 +70,7 @@ dotenv.config();
 const port = process.env.PORT || 3005;
 server.use(express.json());
 
-server.use(cors());
+server.use(cors(corsOptions));
 server.use("/posts", postsRoutes);
 server.use("/profile", experienceRoute);
 server.use("/profile", profilesRouter);
@@ -81,7 +81,7 @@ server.use(badRequestHandler);
 server.use(notFoundHandler);
 server.use(genericErrorHandler);
 
-console.log(listEndpoints(server));
+//console.log(listEndpoints(server));
 
 const url = "mongodb://localhost:27017/LinkedIn";
 mongoose
