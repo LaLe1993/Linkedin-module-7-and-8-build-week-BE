@@ -15,7 +15,7 @@ const UserSchema = new Schema(
     },
     username: {
       type: String,
-      required: true,
+      required: false,
     },
     password: {
       type: String,
@@ -55,6 +55,7 @@ const UserSchema = new Schema(
         },
       },
     ],
+    facebookId: String,
   },
   { timestamps: true }
 );

@@ -6,6 +6,7 @@ const multer = require("multer");
 const fs = require("fs-extra");
 const path = require("path");
 const upload = multer({});
+const passport = require("../utilits/oauth")
 
 router.get("/", authorize, (req, res, next) => {
   try {
@@ -118,5 +119,35 @@ router.post("/refreshToken", async (req, res, next) => {
     }
   }
 });
+
+router.get(
+  "/facebookLogIn",
+  passport.authenticate('facebook', {scope: ["email"]
+    })
+)
+router.get(
+  "/facebookLogIn/redirect",
+  passport.authenticate("facebook"),
+  async (req, res, next) => {
+    try {
+      console.log(req.user)
+      const { token, refreshToken } = req.user.tokens
+      res.cookie("accessToken", token, {
+        httpOnly: true,
+        path: "/"
+      })
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        path: "/",
+      })
+      res.status(200)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    
+    }
+  }
+)
+
 
 module.exports = router;
