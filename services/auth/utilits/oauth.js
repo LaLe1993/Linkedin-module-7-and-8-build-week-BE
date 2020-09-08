@@ -8,8 +8,8 @@ const UserModel = require("../user/schema")
 passport.use(
   new Strategy(
     {
-      clientID: "308972960437506",
-      clientSecret: "51c22632a00662a405d036c05a22b5cf",
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
       callbackURL: `http://localhost:3003/user/facebookLogIn/redirect`,
       profileFields: ['id', 'email', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified']
 

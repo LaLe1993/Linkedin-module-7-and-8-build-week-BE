@@ -201,7 +201,7 @@ profilesRouter.get("/:id/profilePDF", authorize, async (req, res, next) => {
 // Modifie a profile
 profilesRouter.put("/:id", authorize, async (req, res, next) => {
   try {
-    console.log(req.body);
+    //console.log(req.body);
     const profile = await UserSchema.findByIdAndUpdate(
       req.params.id,
       req.body
