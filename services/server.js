@@ -18,29 +18,35 @@ const passport = require("passport");
 server.use(passport.initialize());
 
 //sockets
-const users = [];
+let users = [];
 io.on("connection", (socket) => {
   let id = socket.id;
+  let user;
   console.log("connected");
-  socket.on("info", ({ username }) => {
-    const userExists = users.find((user) => user.username === username);
+  socket.on("connectinfo", ({ username }) => {
+    let userExists = users.find((user) => user.username === username);
     if (!userExists) {
       users.push({ username, id });
     }
     io.emit("updateUsers", users);
+    user = username;
     console.log(users);
   });
   socket.on("chatmessage", ({ from, text, to }) => {
     let receiver = users.find((user) => user.username === to);
-    io.to(receiver.id).emit("message", { from, text, to });
-    console.log(text);
+    let sender = users.find((user) => user.username === from);
+    io.to(receiver.id).to(sender.id).emit("message", { from, text, to });
+    console.log(from);
+    console.log(to);
     console.log(receiver);
   });
   //
 
   //
   socket.on("disconnect", () => {
-    console.log("disconnected");
+    let newUsers = users.filter((element) => element.username !== user);
+    io.emit("userAfterDC", newUsers);
+    console.log("disconnected", newUsers);
   });
 });
 
