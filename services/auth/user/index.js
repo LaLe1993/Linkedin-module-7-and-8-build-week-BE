@@ -119,4 +119,64 @@ router.post("/refreshToken", async (req, res, next) => {
   }
 });
 
+<<<<<<< Updated upstream
+=======
+router.get(
+  "/facebookLogIn",
+  passport.authenticate('facebook', {scope: ["email"]
+    })
+)
+router.get(
+  "/facebookLogIn/redirect",
+  passport.authenticate("facebook"),
+  async (req, res, next) => {
+    try {
+      console.log(req.user)
+      const { token, refreshToken } = req.user.tokens
+      res.cookie("accessToken", token, {
+        httpOnly: true,
+        path: "/"
+      })
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        path: "/",
+      })
+      res.status(200)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    
+    }
+  }
+)
+
+router.get(
+  "/auth/LinkedIn",
+  passport.authenticate('linkedin')
+)
+router.get(
+  "/auth/LinkedIn/redirect",
+  passport.authenticate("linkedin"),
+  async (req, res, next) => {
+    try {
+      console.log(req.user)
+      const { token, refreshToken } = req.user.tokens
+      res.cookie("accessToken", token, {
+        httpOnly: true,
+        path: "/"
+      })
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        path: "/",
+      })
+      res.status(200)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    
+    }
+  }
+)
+
+>>>>>>> Stashed changes
 module.exports = router;
