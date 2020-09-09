@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+const dotenv = require("dotenv").config();
 const postsRoutes = require("./posts");
 const experienceRoute = require("./experience");
 const commentRoutes = require("./comments");
@@ -72,8 +72,6 @@ const {
   badRequestHandler,
   genericErrorHandler,
 } = require("./errorHandlers");
-
-dotenv.config();
 
 const port = process.env.PORT || 3005;
 server.use(express.json());
