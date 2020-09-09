@@ -69,7 +69,7 @@ router.post("/signUp", upload.single("image"), async (req, res, next) => {
 
 // add profile picture
 router.post(
-  "/user/uploadImage",
+  "/uploadImage",
   upload.single("image"),
   authorize,
   async (req, res) => {
@@ -186,7 +186,7 @@ router.put("/", authorize, async (req, res, next) => {
 });
 
 // Delete a profile
-profilesRouter.delete("/", async (req, res, next) => {
+router.delete("/", async (req, res, next) => {
   try {
     const profile = await UserModel.findByIdAndDelete(req.user._id);
     if (profile) {

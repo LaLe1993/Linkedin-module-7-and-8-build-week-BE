@@ -35,16 +35,18 @@ io.on("connection", (socket) => {
   socket.on("chatmessage", ({ from, text, to }) => {
     let receiver = users.find((user) => user.username === to);
     let sender = users.find((user) => user.username === from);
-    io.to(receiver.id).to(sender.id).emit("message", { from, text, to });
-    console.log(from);
-    console.log(to);
+    io.to(receiver.id).emit("message", { from, text, to });
+    io.to(sender.id).emit("message", { from, text, to });
+
     console.log(receiver);
+    console.log(sender);
   });
   //
 
   //
   socket.on("disconnect", () => {
     let newUsers = users.filter((element) => element.username !== user);
+    users = newUsers;
     io.emit("userAfterDC", newUsers);
     console.log("disconnected", newUsers);
   });
