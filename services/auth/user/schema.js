@@ -55,6 +55,11 @@ const UserSchema = new Schema(
         },
       },
     ],
+<<<<<<< Updated upstream
+=======
+    facebookId: String,
+    LinkedInId: String,
+>>>>>>> Stashed changes
   },
   { timestamps: true }
 );
