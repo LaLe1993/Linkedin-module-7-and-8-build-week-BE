@@ -7,13 +7,27 @@ const fs = require("fs-extra");
 const path = require("path");
 const upload = multer({});
 
-router.get("/", authorize, (req, res, next) => {
+//return all profiles
+
+router.get("/", authorize, async (req, res, next) => {
+  try {
+    const users = await UserModel.find();
+    console.log(users);
+    res.status(200).send(users);
+  } catch (error) {
+    next("No user Found");
+  }
+});
+// return single user
+router.get("/me", authorize, (req, res, next) => {
   try {
     res.send(req.user);
   } catch (error) {
     next("No user Found");
   }
 });
+
+//register route
 
 router.post("/signUp", upload.single("image"), async (req, res, next) => {
   try {
@@ -53,6 +67,40 @@ router.post("/signUp", upload.single("image"), async (req, res, next) => {
   }
 });
 
+// add profile picture
+router.post(
+  "/user/uploadImage",
+  upload.single("image"),
+  authorize,
+  async (req, res) => {
+    const imagesPath = path.join(__dirname, "/images");
+    await fs.writeFile(
+      path.join(
+        imagesPath,
+        req.params.id + "." + req.file.originalname.split(".").pop()
+      ),
+      req.file.buffer
+    );
+
+    //
+    var obj = {
+      image: fs.readFileSync(
+        path.join(
+          __dirname +
+            "/images/" +
+            req.params.id +
+            "." +
+            req.file.originalname.split(".").pop()
+        )
+      ),
+    };
+    //
+    await UserModel.findByIdAndUpdate(req.user._id, obj);
+    res.send("image added successfully");
+  }
+);
+
+//login route
 router.post("/signIn", async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -77,6 +125,8 @@ router.post("/signIn", async (req, res, next) => {
     next(error);
   }
 });
+
+//logout route
 router.post("/signOut", authorize, async (req, res, next) => {
   try {
     req.user.refreshTokens = req.user.refreshTokens.filter(
@@ -116,6 +166,38 @@ router.post("/refreshToken", async (req, res, next) => {
       err.httpStatusCode = 403;
       next(err);
     }
+  }
+});
+
+// Modify a profile
+router.put("/", authorize, async (req, res, next) => {
+  try {
+    const profile = await UserModel.findOneAndUpdate(req.user._id, req.body);
+    if (profile) {
+      res.status(200).send("OK");
+    } else {
+      const error = new Error(`Profile with id ${req.params.id} not found!`);
+      error.httpStatusCode = 404;
+      next(error);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Delete a profile
+profilesRouter.delete("/", async (req, res, next) => {
+  try {
+    const profile = await UserModel.findByIdAndDelete(req.user._id);
+    if (profile) {
+      res.status(200).send("Delete!");
+    } else {
+      const error = new Error(`Profile with id ${req.params.id} not found!`);
+      error.httpStatusCode = 404;
+      next(error);
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
