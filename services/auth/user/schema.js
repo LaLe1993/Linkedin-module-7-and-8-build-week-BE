@@ -15,7 +15,7 @@ const UserSchema = new Schema(
     },
     username: {
       type: String,
-      required: true,
+      required: false,
     },
     password: {
       type: String,
@@ -29,7 +29,7 @@ const UserSchema = new Schema(
       type: String,
       required: true,
       lowercase: true,
-      unique: true,
+      unique: false,
       validate: {
         validator: async (value) => {
           if (!v.isEmail(value)) {
@@ -55,6 +55,8 @@ const UserSchema = new Schema(
         },
       },
     ],
+    facebookId: String,
+    LinkedInId: String,
   },
   { timestamps: true }
 );

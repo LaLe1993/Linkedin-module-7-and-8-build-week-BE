@@ -1,27 +1,28 @@
 const express = require("express");
-const ProfilesSchema = require("./schema");
+//const UserSchema = require("./schema");
 const profilesRouter = express.Router();
 const multer = require("multer");
 const fs = require("fs-extra");
 const path = require("path");
 const upload = multer({});
 const PDFDocument = require("pdfkit");
+const authorize = require("../auth/middleware/authorize")
+const UserSchema = require("../auth/user/schema")
 
 // Get all profiles
-profilesRouter.get("/", async (req, res, next) => {
-  try {
-    const profiles = await ProfilesSchema.find(req.query);
-    res.status(200).send(profiles);
+profilesRouter.get("/",authorize, async (req, res, next) => {
+   try {
+    res.send(req.user);
   } catch (error) {
-    next(error);
+    next("No user Found");
   }
 });
 
 // Get single profile
-profilesRouter.get("/:username", async (req, res, next) => {
+profilesRouter.get("/:username", authorize, async (req, res, next) => {
   try {
-    const username = req.params.username;
-    const profile = await ProfilesSchema.find({username: username});
+    const username = req.user.username;
+    const profile = await UserSchema.find({username: username});
     if (profile) {
       res.status(200).send(profile);
     } else {
@@ -37,14 +38,14 @@ profilesRouter.get("/:username", async (req, res, next) => {
 
 // Post a new image for a profile
 profilesRouter.post(
-  "/:id/uploadImage",
+  "/:id/uploadImage", authorize,
   upload.single("image"),
   async (req, res) => {
     const imagesPath = path.join(__dirname, "/images");
     await fs.writeFile(
       path.join(
         imagesPath,
-        req.params.id + "." + req.file.originalname.split(".").pop()
+        req.user.id + "." + req.file.originalname.split(".").pop()
       ),
       req.file.buffer
     );
@@ -55,20 +56,20 @@ profilesRouter.post(
         path.join(
           __dirname +
             "/images/" +
-            req.params.id +
+            req.user.id +
             "." +
             req.file.originalname.split(".").pop()
         )
       ),
     };
     //
-    await ProfilesSchema.findByIdAndUpdate(req.params.id, obj);
+    await UserSchema.findByIdAndUpdate(req.user.id, obj);
     res.send("image added successfully");
   }
 );
 
 // Post a new profile
-profilesRouter.post("/", upload.single("image"), async (req, res, next) => {
+profilesRouter.post("/", upload.single("image"), authorize, async (req, res, next) => {
   try {
     if (req.file) {
       const imagesPath = path.join(__dirname, "/images");
@@ -98,7 +99,7 @@ profilesRouter.post("/", upload.single("image"), async (req, res, next) => {
       };
     }
 
-    const newProfile = new ProfilesSchema(obj);
+    const newProfile = new UserSchema(obj);
     await newProfile.save();
     res.send("ok");
     /*
@@ -106,7 +107,7 @@ profilesRouter.post("/", upload.single("image"), async (req, res, next) => {
             ...req.body,
             "image": "https://i.dlpng.com/static/png/5326621-pingu-png-images-png-cliparts-free-download-on-seekpng-pingu-png-300_255_preview.png"
         }
-        const rawNewProfile = new ProfilesSchema(newProfile)
+        const rawNewProfile = new UserSchema(newProfile)
         const { id } = await rawNewProfile.save()
         res.status(201).send(id)
 
@@ -117,11 +118,11 @@ profilesRouter.post("/", upload.single("image"), async (req, res, next) => {
 });
 
 // Create a PDF file of a profile
-profilesRouter.get("/:id/profilePDF", async (req, res, next) => {
+profilesRouter.get("/:id/profilePDF", authorize, async (req, res, next) => {
   try {
     console.log("here");
-    const id = req.params.id;
-    const profile = await ProfilesSchema.findById(id);
+    const id = req.user.id;
+    const profile = await UserSchema.findById(id);
 
     console.log(profile);
     function example() {
@@ -198,16 +199,17 @@ profilesRouter.get("/:id/profilePDF", async (req, res, next) => {
 });
 
 // Modifie a profile
-profilesRouter.put("/:id", async (req, res, next) => {
+profilesRouter.put("/:id", authorize, async (req, res, next) => {
   try {
-    const profile = await ProfilesSchema.findOneAndUpdate(
+    //console.log(req.body);
+    const profile = await UserSchema.findByIdAndUpdate(
       req.params.id,
       req.body
     );
     if (profile) {
       res.status(200).send("OK");
     } else {
-      const error = new Error(`Profile with id ${req.params.id} not found!`);
+      const error = new Error(`Profile with id ${req.user.id} not found!`);
       error.httpStatusCode = 404;
       next(error);
     }
@@ -217,13 +219,13 @@ profilesRouter.put("/:id", async (req, res, next) => {
 });
 
 // Delete a profile
-profilesRouter.delete("/:id", async (req, res, next) => {
+profilesRouter.delete("/:id", authorize, async (req, res, next) => {
   try {
-    const profile = await ProfilesSchema.findByIdAndDelete(req.params.id);
+    const profile = await UserSchema.findByIdAndDelete(req.user.id);
     if (profile) {
       res.status(200).send("Delete!");
     } else {
-      const error = new Error(`Profile with id ${req.params.id} not found!`);
+      const error = new Error(`Profile with id ${req.user.id} not found!`);
       error.httpStatusCode = 404;
       next(error);
     }
