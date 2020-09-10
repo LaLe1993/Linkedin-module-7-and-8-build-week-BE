@@ -6,12 +6,12 @@ const fs = require("fs-extra");
 const path = require("path");
 const upload = multer({});
 const PDFDocument = require("pdfkit");
-const authorize = require("../auth/middleware/authorize")
-const UserSchema = require("../auth/user/schema")
+const authorize = require("../auth/middleware/authorize");
+const UserSchema = require("../auth/user/schema");
 
 // Get all profiles
-profilesRouter.get("/",authorize, async (req, res, next) => {
-   try {
+profilesRouter.get("/", authorize, async (req, res, next) => {
+  try {
     res.send(req.user);
   } catch (error) {
     next("No user Found");
@@ -22,7 +22,7 @@ profilesRouter.get("/",authorize, async (req, res, next) => {
 profilesRouter.get("/:username", authorize, async (req, res, next) => {
   try {
     const username = req.user.username;
-    const profile = await UserSchema.find({username: username});
+    const profile = await UserSchema.find({ username: username });
     if (profile) {
       res.status(200).send(profile);
     } else {
@@ -38,7 +38,8 @@ profilesRouter.get("/:username", authorize, async (req, res, next) => {
 
 // Post a new image for a profile
 profilesRouter.post(
-  "/:id/uploadImage", authorize,
+  "/:id/uploadImage",
+  authorize,
   upload.single("image"),
   async (req, res) => {
     const imagesPath = path.join(__dirname, "/images");
@@ -69,40 +70,44 @@ profilesRouter.post(
 );
 
 // Post a new profile
-profilesRouter.post("/", upload.single("image"), authorize, async (req, res, next) => {
-  try {
-    if (req.file) {
-      const imagesPath = path.join(__dirname, "/images");
-      await fs.writeFile(
-        path.join(
-          imagesPath,
-          req.body.username + "." + req.file.originalname.split(".").pop()
-        ),
-        req.file.buffer
-      );
-      var obj = {
-        ...req.body,
-        image: fs.readFileSync(
+profilesRouter.post(
+  "/",
+  upload.single("image"),
+  authorize,
+  async (req, res, next) => {
+    try {
+      if (req.file) {
+        const imagesPath = path.join(__dirname, "/images");
+        await fs.writeFile(
           path.join(
-            __dirname +
-              "/images/" +
-              req.body.username +
-              "." +
-              req.file.originalname.split(".").pop()
-          )
-        ),
-      };
-    } else {
-      var obj = {
-        ...req.body,
-        image: fs.readFileSync(path.join(__dirname, "./images/default.jpg")),
-      };
-    }
+            imagesPath,
+            req.body.username + "." + req.file.originalname.split(".").pop()
+          ),
+          req.file.buffer
+        );
+        var obj = {
+          ...req.body,
+          image: fs.readFileSync(
+            path.join(
+              __dirname +
+                "/images/" +
+                req.body.username +
+                "." +
+                req.file.originalname.split(".").pop()
+            )
+          ),
+        };
+      } else {
+        var obj = {
+          ...req.body,
+          image: fs.readFileSync(path.join(__dirname, "./images/default.jpg")),
+        };
+      }
 
-    const newProfile = new UserSchema(obj);
-    await newProfile.save();
-    res.send("ok");
-    /*
+      const newProfile = new UserSchema(obj);
+      await newProfile.save();
+      res.send("ok");
+      /*
         const newProfile = {
             ...req.body,
             "image": "https://i.dlpng.com/static/png/5326621-pingu-png-images-png-cliparts-free-download-on-seekpng-pingu-png-300_255_preview.png"
@@ -112,10 +117,11 @@ profilesRouter.post("/", upload.single("image"), authorize, async (req, res, nex
         res.status(201).send(id)
 
         */
-  } catch (error) {
-    next(error);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 // Create a PDF file of a profile
 profilesRouter.get("/:id/profilePDF", authorize, async (req, res, next) => {
@@ -202,10 +208,7 @@ profilesRouter.get("/:id/profilePDF", authorize, async (req, res, next) => {
 profilesRouter.put("/:id", authorize, async (req, res, next) => {
   try {
     //console.log(req.body);
-    const profile = await UserSchema.findByIdAndUpdate(
-      req.params.id,
-      req.body
-    );
+    const profile = await UserSchema.findByIdAndUpdate(req.params.id, req.body);
     if (profile) {
       res.status(200).send("OK");
     } else {

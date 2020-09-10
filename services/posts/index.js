@@ -4,9 +4,8 @@ const multer = require("multer");
 const fs = require("fs-extra");
 const path = require("path");
 const ProfilesModel = require("../profiles/schema");
-const userModel = require("../auth/user/schema")
+const userModel = require("../auth/user/schema");
 const { verifyJWT } = require("../auth/utilits/jwt.js");
-
 
 const router = express.Router();
 const upload = multer({});
@@ -30,11 +29,11 @@ router.get("/:id", async (req, res) => {
 
 //POST a post
 router.post("/", async (req, res) => {
-  const token = req.cookies.accessToken
-  const decodedToken = await verifyJWT(token)
-  console.log("decoded",decodedToken)
+  const token = req.cookies.accessToken;
+  const decodedToken = await verifyJWT(token);
+  console.log("decoded", decodedToken);
   const user = await userModel.findById(decodedToken._id);
-   console.log("decodeduser",user);
+  console.log("decodeduser", user);
   if (user) {
     const post = { ...req.body, username: user.username, user };
     const file = await new postModel(post);
@@ -50,6 +49,7 @@ router.post("/", async (req, res) => {
 //POST a image
 router.post("/:id", upload.single("image"), async (req, res) => {
   const imagesPath = path.join(__dirname, "/images");
+  console.log(req.file);
   await fs.writeFile(
     path.join(
       imagesPath,
@@ -57,7 +57,6 @@ router.post("/:id", upload.single("image"), async (req, res) => {
     ),
     req.file.buffer
   );
-  console.log(req.file);
   //
   var obj = {
     image: fs.readFileSync(
@@ -79,8 +78,9 @@ router.post("/:id", upload.single("image"), async (req, res) => {
 
 //PUT
 router.put("/:id", async (req, res) => {
+  const file = await postModel.findById(req.params.id);
   await postModel.findByIdAndUpdate(req.params.id, req.body);
-  res.send("updated sucessfully");
+  res.send(file._id);
 });
 
 //DELETE

@@ -77,7 +77,6 @@ const {
   genericErrorHandler,
 } = require("./errorHandlers");
 
-
 const port = process.env.PORT || 3005;
 server.use(express.json());
 
