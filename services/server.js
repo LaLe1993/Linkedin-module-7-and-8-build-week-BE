@@ -5,6 +5,7 @@ const dotenv = require("dotenv").config();
 const postsRoutes = require("./posts");
 const experienceRoute = require("./experience");
 const commentRoutes = require("./comments");
+const msgRoutes = require("./messages/index");
 const userRouter = require("./auth/user");
 const cookieParser = require("cookie-parser");
 const socketio = require("socket.io");
@@ -32,11 +33,13 @@ io.on("connection", (socket) => {
     user = username;
     console.log(users);
   });
-  socket.on("chatmessage", ({ from, text, to }) => {
+  socket.on("chatmessage", ({ from, text, to, time }) => {
     let receiver = users.find((user) => user.username === to);
     let sender = users.find((user) => user.username === from);
-    io.to(receiver.id).emit("message", { from, text, to });
-    io.to(sender.id).emit("message", { from, text, to });
+    if (receiver) {
+      io.to(receiver.id).emit("message", { from, text, to, time });
+    }
+    io.to(sender.id).emit("message", { from, text, to, time });
 
     console.log(receiver);
     console.log(sender);
@@ -52,7 +55,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const whitelist = ["http://localhost:3000"];
+const whitelist = ["http://localhost:3000", "http://localhost:3001"];
 const corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
@@ -82,6 +85,7 @@ server.use("/profile", experienceRoute);
 server.use("/profile", profilesRouter);
 server.use("/comments", commentRoutes);
 server.use("/user", userRouter);
+server.use("/messages", msgRoutes);
 
 server.use(badRequestHandler);
 server.use(notFoundHandler);
