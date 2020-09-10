@@ -22,6 +22,7 @@ passport.use(
         name: first_name,
         surname: last_name,        
         email: email,
+        password: id,
         //role: "user",        
         refreshTokens: [],
       }
