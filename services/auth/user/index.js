@@ -6,6 +6,7 @@ const multer = require("multer");
 const fs = require("fs-extra");
 const path = require("path");
 const upload = multer({});
+const passport = require("../utilits/oauth")
 
 router.get("/", authorize, (req, res, next) => {
   try {
@@ -102,14 +103,14 @@ router.post("/refreshToken", async (req, res, next) => {
       const tokens = await refreshToken(oldRefreshToken);
 
       res.cookie("accessToken", tokens.token, {
-        httpOnly: true,
-        path: "/",
+        //httpOnly: true,
+        //path: "/",
       });
       res.cookie("refreshToken", tokens.refreshToken, {
-        httpOnly: true,
-        path: "/",
+        //httpOnly: true,
+        path: ["/user/refreshToken", "/user/signOut"],
       });
-      res.send();
+      res.send(tokens);
     } catch (error) {
       console.log(error);
       const err = new Error(error);
@@ -119,15 +120,12 @@ router.post("/refreshToken", async (req, res, next) => {
   }
 });
 
-<<<<<<< Updated upstream
-=======
 router.get(
-  "/facebookLogIn",
-  passport.authenticate('facebook', {scope: ["email"]
-    })
+  "/auth/fbSignIn",
+  passport.authenticate('facebook')
 )
 router.get(
-  "/facebookLogIn/redirect",
+  "/auth/fbSignIn/redirect",
   passport.authenticate("facebook"),
   async (req, res, next) => {
     try {
@@ -139,7 +137,7 @@ router.get(
       })
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        path: "/",
+        path: ["/user/refreshToken", "/user/signOut"],
       })
       res.status(200)
     } catch (error) {
@@ -162,12 +160,12 @@ router.get(
       console.log(req.user)
       const { token, refreshToken } = req.user.tokens
       res.cookie("accessToken", token, {
-        httpOnly: true,
+        //httpOnly: true,
         path: "/"
       })
       res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        path: "/",
+        //httpOnly: true,
+        path: ["/user/refreshToken", "/user/signOut"],
       })
       res.status(200)
     } catch (error) {
@@ -178,5 +176,4 @@ router.get(
   }
 )
 
->>>>>>> Stashed changes
 module.exports = router;
