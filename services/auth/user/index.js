@@ -220,7 +220,7 @@ router.get(
         httpOnly: true,
         path: ["/user/refreshToken", "/user/signOut"],
       })
-      res.status(200)
+      res.status(200).redirect("http://localhost:3000/feed")
     } catch (error) {
       console.log(error)
       next(error)
@@ -248,7 +248,7 @@ router.get(
         //httpOnly: true,
         path: ["/user/refreshToken", "/user/signOut"],
       })
-      res.status(200)
+      res.status(200).redirect("http://localhost:3000/feed")
     } catch (error) {
       console.log(error)
       next(error)
