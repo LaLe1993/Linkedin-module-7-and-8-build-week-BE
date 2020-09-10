@@ -59,12 +59,14 @@ passport.use(
 
     },
     async (accessToken, refreshToken, profile, done) => {
-      // console.log(profile);
+      console.log('PROFILE',profile);
       const newUser = {
         LinkedInId: profile.id,
         name: profile.name.givenName,
         surname: profile.name.familyName,
         email: profile.emails[0].value,
+        username: profile.name.givenName,
+        linkedInImage: profile.photos[0].value,
         //role: "user",
         password: profile.id,
         refreshTokens: [],

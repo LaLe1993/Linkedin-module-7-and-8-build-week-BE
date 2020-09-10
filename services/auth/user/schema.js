@@ -23,7 +23,10 @@ const UserSchema = new Schema(
       minlength: 3,
     },
     image: {
-      type: Buffer,
+      type: Buffer
+    },
+    linkedInImage: {
+      type: String
     },
     email: {
       type: String,
