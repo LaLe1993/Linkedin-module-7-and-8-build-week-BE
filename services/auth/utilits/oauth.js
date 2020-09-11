@@ -65,7 +65,7 @@ passport.use(
         name: profile.name.givenName,
         surname: profile.name.familyName,
         email: profile.emails[0].value,
-        username: profile.name.givenName,
+        username: profile.id,
         linkedInImage: profile.photos[0].value,
         //role: "user",
         password: profile.id,
