@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const whitelist = ["http://localhost:3000", "http://localhost:3001"];
+const whitelist = ["http://localhost:3000", "http://localhost:3001", "https://linkedinteambe.herokuapp.com"];
 const corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
