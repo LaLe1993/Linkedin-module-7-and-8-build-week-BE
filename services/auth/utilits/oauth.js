@@ -11,7 +11,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: `http://localhost:3003/user/auth/fbSignIn/redirect`,
+      callbackURL: `https://linkedinteambe.herokuapp.com/user/auth/fbSignIn/redirect`,
       profileFields: ['id', 'email', 'gender', "first_name", "last_name"]
 
     },
@@ -54,7 +54,7 @@ passport.use(
     {
       clientID: process.env.LINKEDIN_APP_ID,
       clientSecret: process.env.LINKEDIN_APP_SECRET,
-      callbackURL: `http://localhost:3003/user/auth/LinkedIn/redirect`,
+      callbackURL: `https://linkedinteambe.herokuapp.com/user/auth/LinkedIn/redirect`,
       scope: ["r_liteprofile", "r_emailaddress"],
 
     },
