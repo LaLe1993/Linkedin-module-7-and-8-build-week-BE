@@ -54,7 +54,7 @@ passport.use(
     {
       clientID: process.env.LINKEDIN_APP_ID,
       clientSecret: process.env.LINKEDIN_APP_SECRET,
-      callbackURL: `https://linkedinteambe.herokuapp.com/user/auth/LinkedIn/redirect`,
+      callbackURL: `http://localhost:3003/user/auth/LinkedIn/redirect`,
       scope: ["r_liteprofile", "r_emailaddress"],
 
     },
