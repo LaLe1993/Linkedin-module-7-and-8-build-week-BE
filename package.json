@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nathaliemekahal/LinkedIn_BE.git"
+    "url": "git+https://github.com/LaLe1993/Linkedin-module-7-and-8-build-week-BE.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nathaliemekahal/LinkedIn_BE/issues"
+    "url": "https://github.com/LaLe1993/Linkedin-module-7-and-8-build-week-BE/issues"
   },
-  "homepage": "https://github.com/nathaliemekahal/LinkedIn_BE#readme",
+  "homepage": "https://github.com/LaLe1993/Linkedin-module-7-and-8-build-week-BE#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.5",
