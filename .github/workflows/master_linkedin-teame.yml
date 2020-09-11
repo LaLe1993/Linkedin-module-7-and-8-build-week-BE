@@ -31,5 +31,5 @@ jobs:
       with:
         app-name: 'linkedin-teame'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_bac9e2cc8eb04a6194ce75bea38b1012 }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_55139cea5da7450ead91d279e7dd47cb }}
         package: .
