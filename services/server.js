@@ -80,7 +80,7 @@ const {
 const port = process.env.PORT || 3005;
 server.use(express.json());
 
-server.use(cors());
+server.use(cors(corsOptions));
 server.use("/posts", postsRoutes);
 server.use("/profile", experienceRoute);
 server.use("/profile", profilesRouter);
